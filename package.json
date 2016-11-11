@@ -1,0 +1,33 @@
+{
+  "name": "event-emitter-extra",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/commonjs.js",
+  "scripts": {
+    "build": "webpack",
+    "build:prod": "webpack -p",
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "Signalive Tech <tech@signalive.io>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/signalive/event-emitter-extra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/signalive/event-emitter-extra/issues"
+  },
+  "homepage": "https://github.com/signalive/event-emitter-extra#readme",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "6.18.2",
+    "babel-loader": "6.2.7",
+    "babel-preset-es2015": "6.18.0",
+    "chai": "3.5.0",
+    "lodash": "4.16.6",
+    "mocha": "3.1.2",
+    "sinon": "1.17.6",
+    "sinon-chai": "2.8.0",
+    "webpack": "1.13.3"
+  }
+}
