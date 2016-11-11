@@ -171,7 +171,7 @@ describe('EventEmitterExtra', function() {
         ee.addListener(/test/, spy1);
         ee.addListener(/test/, spy2);
 
-        ee.removeRegexListener(/test/, spy1);
+        ee.removeListener(/test/, spy1);
         ee.emit('test');
 
         spy1.should.have.been.not.called;
@@ -211,7 +211,7 @@ describe('EventEmitterExtra', function() {
         ee.addListener(/test2/, spy3);
         ee.addListener(/test2/, spy4);
 
-        ee.removeAllRegexListeners(/test1/);
+        ee.removeAllListeners(/test1/);
 
         ee.emit('test1');
         ee.emit('test2');

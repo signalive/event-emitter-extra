@@ -53,31 +53,35 @@ class EventEmitterExtra {
 
 
     removeAllListeners(eventName) {
-        remove(this.listeners_, listener => listener.eventName == eventName);
-        delete this.eventListeners_[eventName];
-    }
-
-
-    removeAllRegexListeners(regex) {
-        remove(this.regexListeners_, listener => regexEquals(listener.eventNameRegex, regex));
-        remove(this.listeners_, listener => regexEquals(listener.eventNameRegex, regex));
+        if (isString(eventName)) {
+            remove(this.listeners_, listener => listener.eventName == eventName);
+            delete this.eventListeners_[eventName];
+        } else if (isRegExp(eventName)) {
+            const regex = eventName;
+            remove(this.regexListeners_, listener => regexEquals(listener.eventNameRegex, regex));
+            remove(this.listeners_, listener => regexEquals(listener.eventNameRegex, regex));
+        } else {
+            throw new Error('Event name should be string or regex.');
+        }
     }
 
 
     removeListener(eventName, handler) {
-        const [listener] = remove(this.eventListeners_[eventName], listener => listener.handler == handler);
-        remove(this.listeners_, listener);
-    }
-
-
-    removeRegexListener(regex, handler) {
-        const [listener] = remove(
-            this.regexListeners_,
-            listener =>
-                regexEquals(listener.eventNameRegex, regex) &&
-                listener.handler == handler
-        );
-        remove(this.listeners_, listener);
+        if (isString(eventName)) {
+            const [listener] = remove(this.eventListeners_[eventName], listener => listener.handler == handler);
+            remove(this.listeners_, listener);
+        } else if (isRegExp(eventName)) {
+            const regex = eventName;
+            const [listener] = remove(
+                this.regexListeners_,
+                listener =>
+                    regexEquals(listener.eventNameRegex, regex) &&
+                    listener.handler == handler
+            );
+            remove(this.listeners_, listener);
+        } else {
+            throw new Error('Event name should be string or regex.');
+        }
     }
 
 
