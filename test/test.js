@@ -141,6 +141,27 @@ describe('EventEmitterExtra', function() {
         result.should.be.deep.equal(['test1', 'test2', 'test3']);
     });
 
+    it('should emit async', function(done) {
+        ee.addListener('test', () => 'test1');
+        ee.addListener('test', () => Promise.resolve('test2'));
+        ee.addListener('test', () => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve('test3');
+                }, 10);
+            });
+        });
+        ee.addListener('another', () => 'test4');
+
+        ee
+            .emitAsync('test')
+            .then(result => {
+                result.should.be.deep.equal(['test1', 'test2', 'test3']);
+                done();
+            })
+            .catch(done);
+    });
+
     it('should remove listener', function() {
         const spy1 = sinon.spy();
         const spy2 = sinon.spy();

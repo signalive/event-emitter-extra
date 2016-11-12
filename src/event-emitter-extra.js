@@ -188,6 +188,11 @@ class EventEmitterExtra {
 
         return results;
     }
+
+
+    emitAsync(...args) {
+        return Promise.all(this.emit.apply(this, args));
+    }
 }
 
 
