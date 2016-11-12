@@ -25,7 +25,7 @@ class EventEmitterExtra {
                     this.addListener(event, handler, opt_execLimit);
                 });
             });
-            return;
+            return this;
         }
 
         const listener = new Listener(eventName, handler, opt_execLimit);
@@ -57,6 +57,8 @@ class EventEmitterExtra {
 
         listener.onExpire = this.removeListener_.bind(this);
         this.listeners_.push(listener);
+
+        return this;
     }
 
 
@@ -106,6 +108,8 @@ class EventEmitterExtra {
         } else {
             throw new Error('Event name should be string or regex.');
         }
+
+        return this;
     }
 
 
@@ -132,6 +136,8 @@ class EventEmitterExtra {
         } else {
             throw new Error('Event name should be string or regex.');
         }
+
+        return this;
     }
 
 
@@ -208,17 +214,17 @@ class EventEmitterExtra {
 
 
     on(eventName, handler) {
-        this.addListener(eventName, handler);
+        return this.addListener(eventName, handler);
     }
 
 
     once(eventName, handler) {
-        this.addListener(eventName, handler, 1);
+        return this.addListener(eventName, handler, 1);
     }
 
 
     many(eventName, count, handler) {
-        this.addListener(eventName, handler, count);
+        return this.addListener(eventName, handler, count);
     }
 
 
