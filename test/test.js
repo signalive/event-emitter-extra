@@ -190,6 +190,36 @@ describe('EventEmitterExtra', function() {
         spy2.should.have.been.calledOnce;
     });
 
+    it('should remove multiple listener #1', function() {
+        const spy1 = sinon.spy();
+        const spy2 = sinon.spy();
+
+        ee.addListener('test1', [spy1, spy2]);
+        ee.addListener(/test2/, spy1);
+
+        ee.removeListener(['test1', /test2/], spy1);
+        ee.emit('test1');
+        ee.emit('test2');
+
+        spy1.should.have.been.not.called;
+        spy2.should.have.been.calledOnce;
+    });
+
+    it('should remove multiple listener #2', function() {
+        const spy1 = sinon.spy();
+        const spy2 = sinon.spy();
+
+        ee.addListener('test1', [spy1, spy2]);
+        ee.addListener(/test2/, spy1);
+
+        ee.removeListener(['test1', /test2/], [spy1, spy2]);
+        ee.emit('test1');
+        ee.emit('test2');
+
+        spy1.should.have.been.not.called;
+        spy2.should.have.been.not.called;
+    });
+
     it('should remove all listeners for event name', function() {
         const spy1 = sinon.spy();
         const spy2 = sinon.spy();
@@ -234,6 +264,28 @@ describe('EventEmitterExtra', function() {
         spy4.should.have.been.calledOnce;
     });
 
+    it('should remove all listeners for multiple events', function() {
+        const spy1 = sinon.spy();
+        const spy2 = sinon.spy();
+        const spy3 = sinon.spy();
+        const spy4 = sinon.spy();
+        const spy5 = sinon.spy();
+
+        ee.addListener('test1', [spy1, spy2]);
+        ee.addListener(/test2/, [spy3, spy4]);
+        ee.addListener('test3', spy5);
+
+        ee.removeAllListeners(['test1', /test2/]);
+
+        ee.emit(['test1', 'test2', 'test3']);
+
+        spy1.should.have.been.not.called;
+        spy2.should.have.been.not.called;
+        spy3.should.have.been.not.called;
+        spy4.should.have.been.not.called;
+        spy5.should.have.been.calledOnce;
+    });
+
     it('should get event names', function() {
         ee.addListener('test1', () => {});
         ee.addListener('test2', () => {});
@@ -273,5 +325,22 @@ describe('EventEmitterExtra', function() {
 
         ee.listeners('test').should.be.deep.equal([spy1, spy2]);
         ee.listeners(/test/).should.be.deep.equal([spy3]);
+    });
+
+    it('should add multiple listernes, handlers and emit multiple', function() {
+        const spy1 = sinon.spy();
+        const spy2 = sinon.spy();
+        const spy3 = sinon.spy();
+        const spy4 = sinon.spy();
+
+        ee.addListener(['test', 'test2'], [spy1, spy2, spy3, spy4]);
+        ee.addListener(['test3'], [spy3, spy4]);
+
+        ee.emit(['test', 'test2', 'test3', 'test4']);
+
+        spy1.callCount.should.have.been.equal(2);
+        spy2.callCount.should.have.been.equal(2);
+        spy3.callCount.should.have.been.equal(3);
+        spy4.callCount.should.have.been.equal(3);
     });
 });

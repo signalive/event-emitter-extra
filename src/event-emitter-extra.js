@@ -1,7 +1,8 @@
-import isString from 'lodash/isString';
-import isRegExp from 'lodash/isRegExp';
-import isNumber from 'lodash/isNumber';
+import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
+import isNumber from 'lodash/isNumber';
+import isRegExp from 'lodash/isRegExp';
+import isString from 'lodash/isString';
 import Listener from './listener';
 
 
@@ -16,6 +17,17 @@ class EventEmitterExtra {
 
 
     addListener(eventName, handler, opt_execLimit) {
+        if (isArray(eventName) || isArray(handler)) {
+            const events = isArray(eventName) ? eventName : [eventName];
+            const handlers = isArray(handler) ? handler : [handler];
+            events.forEach(event => {
+                handlers.forEach(handler => {
+                    this.addListener(event, handler, opt_execLimit);
+                });
+            });
+            return;
+        }
+
         const listener = new Listener(eventName, handler, opt_execLimit);
 
         if (listener.eventName) {
@@ -53,7 +65,9 @@ class EventEmitterExtra {
 
 
     removeAllListeners(eventName) {
-        if (isString(eventName)) {
+        if (isArray(eventName)) {
+            eventName.forEach(event => this.removeAllListeners(event));
+        } else if (isString(eventName)) {
             remove(this.listeners_, listener => listener.eventName == eventName);
             delete this.eventListeners_[eventName];
         } else if (isRegExp(eventName)) {
@@ -67,7 +81,15 @@ class EventEmitterExtra {
 
 
     removeListener(eventName, handler) {
-        if (isString(eventName)) {
+        if (isArray(eventName) || isArray(handler)) {
+            const events = isArray(eventName) ? eventName : [eventName];
+            const handlers = isArray(handler) ? handler : [handler];
+            events.forEach(event => {
+                handlers.forEach(handler => {
+                    this.removeListener(event, handler);
+                });
+            });
+        } else if (isString(eventName)) {
             const [listener] = remove(this.eventListeners_[eventName], listener => listener.handler == handler);
             remove(this.listeners_, listener);
         } else if (isRegExp(eventName)) {
@@ -122,6 +144,7 @@ class EventEmitterExtra {
 
 
     listenerCount(eventName) {
+        // TODO: Support arrays
         if (isString(eventName)) {
             if (!this.eventListeners_[eventName])
                 return 0;
@@ -138,6 +161,7 @@ class EventEmitterExtra {
 
 
     listeners(eventName) {
+        // TODO: Support arrays
         if (isString(eventName)) {
             if (!this.eventListeners_[eventName])
                 return [];
@@ -169,8 +193,16 @@ class EventEmitterExtra {
 
 
     emit(eventName, ...args) {
-        if (!isString(eventName))
+        if (isArray(eventName)) {
+            let rv = [];
+            eventName.forEach(event => {
+                const results = this.emit(event, ...args);
+                rv = rv.concat(results);
+            });
+            return rv;
+        } else if (!isString(eventName)) {
             throw new Error('Event name should be string');
+        }
 
         let results = [];
 
@@ -191,7 +223,7 @@ class EventEmitterExtra {
 
 
     emitAsync(...args) {
-        return Promise.all(this.emit.apply(this, args));
+        return Promise.all(this.emit(...args));
     }
 }
 
