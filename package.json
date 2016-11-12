@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/commonjs.js",
   "scripts": {
-    "build": "webpack",
-    "build:prod": "webpack -p",
+    "build": "webpack -p",
+    "build:watch": "webpack -p -w",
     "test": "mocha test/runner.js"
   },
   "keywords": [],
