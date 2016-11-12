@@ -1,7 +1,7 @@
 import isString from 'lodash/isString';
 import isRegExp from 'lodash/isRegExp';
 import isNumber from 'lodash/isNumber';
-import remove from 'lodash/remove';
+import isFunction from 'lodash/isFunction';
 import Listener from './listener';
 
 
@@ -199,6 +199,24 @@ EventEmitterExtra.Listener = Listener;
 function regexEquals(a, b) {
     if (typeof a !== 'object' || typeof b !== 'object') return false;
     return a.toString() === b.toString();
+}
+
+
+function remove(arr, predicate) {
+    let removedItems = [];
+
+    if (isFunction(predicate)) {
+        removedItems = arr.filter(predicate);
+    } else if (arr.indexOf(predicate) > -1) {
+        removedItems.push(predicate);
+    }
+
+    removedItems.forEach(item => {
+        const index = arr.indexOf(item);
+        arr.splice(index, 1);
+    });
+
+    return removedItems;
 }
 
 
