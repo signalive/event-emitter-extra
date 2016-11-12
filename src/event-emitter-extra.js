@@ -16,7 +16,7 @@ class EventEmitterExtra {
     }
 
 
-    addListener(eventName, handler, opt_execLimit) {
+    addListener(eventName, handler, opt_execLimit, opt_prepend) {
         if (isArray(eventName) || isArray(handler)) {
             const events = isArray(eventName) ? eventName : [eventName];
             const handlers = isArray(handler) ? handler : [handler];
@@ -38,17 +38,40 @@ class EventEmitterExtra {
                 throw new Error(`Max listener count reached for event: ${eventName}`);
 
             this.emit('newListener', eventName, handler);
-            this.eventListeners_[listener.eventName].push(listener);
+
+            if (opt_prepend)
+                this.eventListeners_[listener.eventName].unshift(listener);
+            else
+                this.eventListeners_[listener.eventName].push(listener);
         } else if (listener.eventNameRegex) {
             if (this.regexListeners_.length >= this.maxRegexListeners_)
                 throw new Error(`Max regex listener count reached`);
 
             this.emit('newListener', eventName, handler);
-            this.regexListeners_.push(listener);
+
+            if (opt_prepend)
+                this.regexListeners_.unshift(listener);
+            else
+                this.regexListeners_.push(listener);
         }
 
         listener.onExpire = this.removeListener_.bind(this);
         this.listeners_.push(listener);
+    }
+
+
+    prependListener(eventName, handler, opt_execLimit) {
+        return this.addListener(eventName, handler, opt_execLimit, true);
+    }
+
+
+    prependOnceListener(eventName, handler) {
+        return this.addListener(eventName, handler, 1, true);
+    }
+
+
+    prependManyListener(eventName, count, handler) {
+        return this.addListener(eventName, handler, count, true);
     }
 
 
@@ -132,6 +155,7 @@ class EventEmitterExtra {
             throw new Error('n must be integer');
 
         this.maxListeners_ = n;
+        return this;
     }
 
 
@@ -145,6 +169,7 @@ class EventEmitterExtra {
             throw new Error('n must be integer');
 
         this.maxRegexListeners_ = n;
+        return this;
     }
 
 
@@ -230,7 +255,7 @@ class EventEmitterExtra {
 
         results = results.concat(regexMatchedResults);
 
-        return results;
+        return results.length > 0 ? results : false;
     }
 
 

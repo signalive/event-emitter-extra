@@ -11,7 +11,7 @@ describe('EventEmitterExtra', function() {
 
     it('should emit event without any listener', function() {
         const result = ee.emit('test');
-        result.should.be.deep.equal([]);
+        result.should.be.deep.equal(false);
     });
 
     it('should not call listener for past emits', function() {
@@ -19,7 +19,7 @@ describe('EventEmitterExtra', function() {
         const spy = sinon.spy();
         ee.addListener('test', spy);
 
-        result.should.be.deep.equal([]);
+        result.should.be.deep.equal(false);
         spy.should.have.been.not.called;
     });
 
