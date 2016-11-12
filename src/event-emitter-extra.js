@@ -37,11 +37,13 @@ class EventEmitterExtra {
             if (this.eventListeners_[listener.eventName].length >= this.maxListeners_)
                 throw new Error(`Max listener count reached for event: ${eventName}`);
 
+            this.emit('newListener', eventName, handler);
             this.eventListeners_[listener.eventName].push(listener);
         } else if (listener.eventNameRegex) {
             if (this.regexListeners_.length >= this.maxRegexListeners_)
                 throw new Error(`Max regex listener count reached`);
 
+            this.emit('newListener', eventName, handler);
             this.regexListeners_.push(listener);
         }
 
@@ -53,7 +55,7 @@ class EventEmitterExtra {
     removeListener_(listener) {
         remove(this.listeners_, listener);
 
-        if (listener.eventName && this.eventListeners_[listener.eventName]) {
+        if (listener.eventName && isArray(this.eventListeners_[listener.eventName])) {
             remove(this.eventListeners_[listener.eventName], listener);
 
             if (this.eventListeners_[listener.eventName].length == 0)
@@ -61,19 +63,23 @@ class EventEmitterExtra {
         } else if (listener.eventNameRegex) {
             remove(this.regexListeners_, listener);
         }
+
+        this.emit('removeListener', listener.eventName || listener.eventNameRegex, listener.handler);
     }
 
 
     removeAllListeners(eventName) {
         if (isArray(eventName)) {
             eventName.forEach(event => this.removeAllListeners(event));
-        } else if (isString(eventName)) {
-            remove(this.listeners_, listener => listener.eventName == eventName);
-            delete this.eventListeners_[eventName];
+        } else if (isString(eventName) && isArray(this.eventListeners_[eventName])) {
+            const listeners = this.eventListeners_[eventName].slice();
+            listeners.forEach(listener => {
+                this.removeListener_(listener);
+            });
         } else if (isRegExp(eventName)) {
             const regex = eventName;
-            remove(this.regexListeners_, listener => regexEquals(listener.eventNameRegex, regex));
-            remove(this.listeners_, listener => regexEquals(listener.eventNameRegex, regex));
+            const listeners = this.regexListeners_.filter(listener => regexEquals(listener.eventNameRegex, regex));
+            listeners.forEach(listener => this.removeListener_(listener));
         } else {
             throw new Error('Event name should be string or regex.');
         }
@@ -89,18 +95,17 @@ class EventEmitterExtra {
                     this.removeListener(event, handler);
                 });
             });
-        } else if (isString(eventName)) {
-            const [listener] = remove(this.eventListeners_[eventName], listener => listener.handler == handler);
-            remove(this.listeners_, listener);
+        } else if (isString(eventName) && isArray(this.eventListeners_[eventName])) {
+            const listeners = this.eventListeners_[eventName].filter(listener => listener.handler == handler);
+            listeners.forEach(listener => this.removeListener_(listener));
         } else if (isRegExp(eventName)) {
             const regex = eventName;
-            const [listener] = remove(
-                this.regexListeners_,
+            const listeners = this.regexListeners_.filter(
                 listener =>
                     regexEquals(listener.eventNameRegex, regex) &&
                     listener.handler == handler
             );
-            remove(this.listeners_, listener);
+            listeners.forEach(listener => this.removeListener_(listener));
         } else {
             throw new Error('Event name should be string or regex.');
         }
