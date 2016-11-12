@@ -210,16 +210,23 @@ class EventEmitterExtra {
         }
 
         let results = [];
+        const event = {name: eventName};
 
         if (this.eventListeners_[eventName]) {
             const nameMatchedResults = this.eventListeners_[eventName]
-                .map(listener => listener.execute(null, args));
+                .map(listener => listener.execute(
+                    Object.assign({}, listener, {event}),
+                    args
+                ));
             results = results.concat(nameMatchedResults);
         }
 
         const regexMatchedResults = this.regexListeners_
             .filter(listener => listener.testRegexWith(eventName))
-            .map(listener => listener.execute(null, args));
+            .map(listener => listener.execute(
+                Object.assign({}, listener, {event}),
+                args
+            ));
 
         results = results.concat(regexMatchedResults);
 
