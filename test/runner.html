@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>EventEmitterExtra Tests</title>
+
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+
+    <!--[if lt IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="mocha"></div>
+
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/sinon/pkg/sinon.js"></script>
+    <script src="../node_modules/sinon-chai/lib/sinon-chai.js"></script>
+    <script src="../dist/globals.js"></script>
+    <script>
+        mocha.setup('bdd');
+        chai.should();
+    </script>
+    <script src="./test.js"></script>
+    <script>
+        mocha.run();
+    </script>
+</body>
+</html>

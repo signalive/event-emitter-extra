@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "build:prod": "webpack -p",
-    "test": "mocha"
+    "test": "mocha test/runner.js"
   },
   "keywords": [],
   "author": "Signalive Tech <tech@signalive.io>",
