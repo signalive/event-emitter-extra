@@ -1,14 +1,14 @@
 {
   "name": "event-emitter-extra",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Node.js event emitter implementation with regex support, emit results, TTL. Works on browsers.",
   "main": "dist/commonjs.js",
   "scripts": {
     "build": "webpack -p",
     "build:watch": "webpack -p -w",
     "test": "mocha test/runner.js"
   },
-  "keywords": [],
+  "keywords": ["event", "events", "emitter", "eventemitter"],
   "author": "Signalive Tech <tech@signalive.io>",
   "repository": {
     "type": "git",
