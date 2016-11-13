@@ -11,7 +11,7 @@ describe('EventEmitterExtra', function() {
 
     it('should emit event without any listener', function() {
         var result = ee.emit('test');
-        result.should.be.deep.equal(false);
+        assert.equal(result, false);
     });
 
     it('should not call listener for past emits', function() {
@@ -19,8 +19,8 @@ describe('EventEmitterExtra', function() {
         var spy = sinon.spy();
         ee.addListener('test', spy);
 
-        result.should.be.deep.equal(false);
-        spy.should.have.been.not.called;
+        assert.equal(result, false);
+        assert.equal(spy.callCount, 0)
     });
 
     it('should call listener once', function() {
@@ -29,8 +29,8 @@ describe('EventEmitterExtra', function() {
 
         var result = ee.emit('test');
 
-        result.should.be.deep.equal([undefined]);
-        spy.should.have.been.calledOnce;
+        assert.deepEqual(result, [undefined]);
+        assert(spy.calledOnce);
     });
 
     it('should call listener thrice', function() {
@@ -41,7 +41,7 @@ describe('EventEmitterExtra', function() {
         ee.emit('test');
         ee.emit('test');
 
-        spy.should.have.been.calledThrice;
+        assert(spy.calledThrice);
     });
 
     it('should call listener once even that event emitted multiple times #1', function() {
@@ -52,7 +52,7 @@ describe('EventEmitterExtra', function() {
         ee.emit('test');
         ee.emit('test');
 
-        spy.should.have.been.calledOnce;
+        assert(spy.calledOnce);
     });
 
     it('should call listener once even that event emitted multiple times #2', function() {
@@ -64,7 +64,7 @@ describe('EventEmitterExtra', function() {
         ee.emit('test');
         ee.emit('test');
 
-        spy.should.have.been.calledTwice;
+        assert(spy.calledTwice);
     });
 
     it('should call listener with emit arguments', function() {
@@ -76,8 +76,8 @@ describe('EventEmitterExtra', function() {
 
         ee.emit('test', arg1, arg2);
 
-        spy.should.have.been.calledOnce;
-        spy.should.have.been.calledWith(arg1, arg2);
+        assert(spy.calledOnce);
+        assert(spy.calledWith(arg1, arg2));
     });
 
     it('should not add more listeners if limit exceed', function() {
@@ -90,12 +90,14 @@ describe('EventEmitterExtra', function() {
 
         ee.addListener('test', spy1);
         ee.addListener('test', spy2);
-        (function() {
-            return ee.addListener('test', spy3);
-        }).should.throw(Error);
-        (function() {
-            return ee.addListener('test', spy4);
-        }).should.throw(Error);
+
+        assert.throws(function() {
+            ee.addListener('test', spy3);
+        }, Error);
+
+        assert.throws(function() {
+            ee.addListener('test', spy4);
+        }, Error);
     });
 
     it('should not add more regex listeners if regex limit exceed', function() {
@@ -108,12 +110,14 @@ describe('EventEmitterExtra', function() {
 
         ee.addListener(/test/, spy1);
         ee.addListener(/test/, spy2);
-        (function() {
+
+        assert.throws(function() {
             ee.addListener(/test/, spy3);
-        }).should.throw(Error);
-        (function() {
+        }, Error);
+
+        assert.throws(function() {
             ee.addListener(/test/, spy4);
-        }).should.throw(Error);
+        }, Error);
     });
 
     it('should not handler for another event name', function() {
@@ -124,8 +128,8 @@ describe('EventEmitterExtra', function() {
 
         ee.emit('test');
 
-        spy1.should.have.been.calledOnce;
-        spy2.should.have.been.not.called;
+        assert(spy1.calledOnce);
+        assert.equal(spy2.callCount, 0);
     });
 
     it('should call regex handlers', function() {
@@ -136,7 +140,7 @@ describe('EventEmitterExtra', function() {
         ee.emit('some-test');
         ee.emit('sometestmore');
 
-        spy.should.have.been.calledThrice;
+        assert(spy.calledThrice);
     });
 
     it('should return array of handler returnings', function() {
@@ -146,7 +150,7 @@ describe('EventEmitterExtra', function() {
         ee.addListener('another', function() { return 'test4'; });
 
         var result = ee.emit('test');
-        result.should.be.deep.equal(['test1', 'test2', 'test3']);
+        assert.deepEqual(result, ['test1', 'test2', 'test3']);
     });
 
     it('should emit async', function(done) {
@@ -164,7 +168,7 @@ describe('EventEmitterExtra', function() {
         ee
             .emitAsync('test')
             .then(function(result) {
-                result.should.be.deep.equal(['test1', 'test2', 'test3']);
+                assert.deepEqual(result, ['test1', 'test2', 'test3']);
                 done();
             })
             .catch(done);
@@ -180,8 +184,8 @@ describe('EventEmitterExtra', function() {
         ee.removeListener('test', spy1);
         ee.emit('test');
 
-        spy1.should.have.been.not.called;
-        spy2.should.have.been.calledOnce;
+        assert.equal(spy1.callCount, 0);
+        assert(spy2.calledOnce);
     });
 
     it('should remove regex listener', function() {
@@ -194,8 +198,8 @@ describe('EventEmitterExtra', function() {
         ee.removeListener(/test/, spy1);
         ee.emit('test');
 
-        spy1.should.have.been.not.called;
-        spy2.should.have.been.calledOnce;
+        assert.equal(spy1.callCount, 0);
+        assert(spy2.calledOnce);
     });
 
     it('should remove multiple listener #1', function() {
@@ -209,8 +213,8 @@ describe('EventEmitterExtra', function() {
         ee.emit('test1');
         ee.emit('test2');
 
-        spy1.should.have.been.not.called;
-        spy2.should.have.been.calledOnce;
+        assert.equal(spy1.callCount, 0);
+        assert(spy2.calledOnce);
     });
 
     it('should remove multiple listener #2', function() {
@@ -224,8 +228,8 @@ describe('EventEmitterExtra', function() {
         ee.emit('test1');
         ee.emit('test2');
 
-        spy1.should.have.been.not.called;
-        spy2.should.have.been.not.called;
+        assert.equal(spy1.callCount, 0);
+        assert.equal(spy2.callCount, 0);
     });
 
     it('should remove all listeners for event name', function() {
@@ -244,10 +248,10 @@ describe('EventEmitterExtra', function() {
         ee.emit('test1');
         ee.emit('test2');
 
-        spy1.should.have.been.not.called;
-        spy2.should.have.been.not.called;
-        spy3.should.have.been.calledOnce;
-        spy4.should.have.been.calledOnce;
+        assert.equal(spy1.callCount, 0);
+        assert.equal(spy2.callCount, 0);
+        assert(spy3.calledOnce);
+        assert(spy4.calledOnce);
     });
 
     it('should remove all listeners for regex', function() {
@@ -266,10 +270,10 @@ describe('EventEmitterExtra', function() {
         ee.emit('test1');
         ee.emit('test2');
 
-        spy1.should.have.been.not.called;
-        spy2.should.have.been.not.called;
-        spy3.should.have.been.calledOnce;
-        spy4.should.have.been.calledOnce;
+        assert.equal(spy1.callCount, 0);
+        assert.equal(spy2.callCount, 0);
+        assert(spy3.calledOnce);
+        assert(spy4.calledOnce);
     });
 
     it('should remove all listeners for multiple events', function() {
@@ -287,11 +291,11 @@ describe('EventEmitterExtra', function() {
 
         ee.emit(['test1', 'test2', 'test3']);
 
-        spy1.should.have.been.not.called;
-        spy2.should.have.been.not.called;
-        spy3.should.have.been.not.called;
-        spy4.should.have.been.not.called;
-        spy5.should.have.been.calledOnce;
+        assert.equal(spy1.callCount, 0);
+        assert.equal(spy2.callCount, 0);
+        assert.equal(spy3.callCount, 0);
+        assert.equal(spy4.callCount, 0);
+        assert(spy5.calledOnce);
     });
 
     it('should get event names', function() {
@@ -299,7 +303,7 @@ describe('EventEmitterExtra', function() {
         ee.addListener('test2', function() {});
         ee.addListener(/test3/, function() {});
 
-        ee.eventNames().should.be.deep.equal(['test1', 'test2'])
+        assert.deepEqual(ee.eventNames(), ['test1', 'test2']);
     });
 
     it('should get regexes', function() {
@@ -307,7 +311,7 @@ describe('EventEmitterExtra', function() {
         ee.addListener(/test2/, function() {});
         ee.addListener('test3', function() {});
 
-        ee.regexes().should.be.deep.equal([/test1/, /test2/])
+        assert.deepEqual(ee.regexes(), [/test1/, /test2/]);
     });
 
     it('should get listener counts', function() {
@@ -316,8 +320,8 @@ describe('EventEmitterExtra', function() {
         ee.addListener(/test/, function() {});
         ee.addListener('test2', function() {});
 
-        ee.listenerCount('test').should.be.equal(2);
-        ee.listenerCount(/test/).should.be.equal(1);
+        assert.equal(ee.listenerCount('test'), 2);
+        assert.equal(ee.listenerCount(/test/), 1);
     });
 
     it('should get listeners', function() {
@@ -331,8 +335,8 @@ describe('EventEmitterExtra', function() {
         ee.addListener(/test/, spy3);
         ee.addListener('test2', spy4);
 
-        ee.listeners('test').should.be.deep.equal([spy1, spy2]);
-        ee.listeners(/test/).should.be.deep.equal([spy3]);
+        assert.deepEqual(ee.listeners('test'), [spy1, spy2]);
+        assert.deepEqual(ee.listeners(/test/), [spy3]);
     });
 
     it('should add multiple listernes, handlers and emit multiple', function() {
@@ -346,9 +350,9 @@ describe('EventEmitterExtra', function() {
 
         ee.emit(['test', 'test2', 'test3', 'test4']);
 
-        spy1.callCount.should.have.been.equal(2);
-        spy2.callCount.should.have.been.equal(2);
-        spy3.callCount.should.have.been.equal(3);
-        spy4.callCount.should.have.been.equal(3);
+        assert.equal(spy1.callCount, 2);
+        assert.equal(spy2.callCount, 2);
+        assert.equal(spy3.callCount, 3);
+        assert.equal(spy4.callCount, 3);
     });
 });
