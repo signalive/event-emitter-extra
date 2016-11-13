@@ -1,9 +1,11 @@
+import assign from 'lodash/assign';
 import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import isRegExp from 'lodash/isRegExp';
 import isString from 'lodash/isString';
 import Listener from './listener';
+import Promise from 'promise-polyfill';
 
 
 class EventEmitterExtra {
@@ -246,7 +248,7 @@ class EventEmitterExtra {
         if (this.eventListeners_[eventName]) {
             const nameMatchedResults = this.eventListeners_[eventName]
                 .map(listener => listener.execute(
-                    Object.assign({}, listener, {event}),
+                    assign({}, listener, {event}),
                     args
                 ));
             results = results.concat(nameMatchedResults);
@@ -255,7 +257,7 @@ class EventEmitterExtra {
         const regexMatchedResults = this.regexListeners_
             .filter(listener => listener.testRegexWith(eventName))
             .map(listener => listener.execute(
-                Object.assign({}, listener, {event}),
+                assign({}, listener, {event}),
                 args
             ));
 
