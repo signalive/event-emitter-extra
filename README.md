@@ -16,7 +16,7 @@ Extra features to boost your flow:
 - Works in Node.js > v0.10
 - Works in browsers
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/event-emitter-extra.svg)](https://saucelabs.com/u/event-emitter-extra)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/eventemitterextra.svg)](https://saucelabs.com/u/eventemitterextra)
 
 ## Getting Started
 
