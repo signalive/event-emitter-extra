@@ -1,5 +1,7 @@
 # EventEmitterExtra
 
+[![Build Status](https://travis-ci.org/signalive/event-emitter-extra.svg?branch=master)](https://travis-ci.org/signalive/event-emitter-extra)
+
 EventEmitterExtra is an implementation of node.js's EventEmitter
 where can be found in `events` module. The interface is exactly same
 with node.js's EventEmitter. So you can directly replace
@@ -10,6 +12,7 @@ Extra features to boost your flow:
 - Regex support for listening
 - `emit()` method returns all results of listener functions
 - Times to listen (TTL) with `many()` (Idea borrowed from [EventEmitter2](https://github.com/asyncly/EventEmitter2))
+- Works in Node.js > v0.10
 - Works in browsers
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/event-emitter-extra.svg)](https://saucelabs.com/u/event-emitter-extra)
