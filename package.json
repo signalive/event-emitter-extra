@@ -5,10 +5,18 @@
   "main": "dist/commonjs.js",
   "scripts": {
     "build": "webpack -p",
+    "build:dev": "webpack",
     "build:watch": "webpack -p -w",
-    "test": "mocha test/runner.js"
+    "test": "mocha test/runner.js",
+    "test:browser": "zuul --local 8080 -- test/runner.js",
+    "test:cloud": "zuul -- test/runner.js"
   },
-  "keywords": ["event", "events", "emitter", "eventemitter"],
+  "keywords": [
+    "event",
+    "events",
+    "emitter",
+    "eventemitter"
+  ],
   "author": "Signalive Tech <tech@signalive.io>",
   "repository": {
     "type": "git",
