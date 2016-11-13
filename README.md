@@ -12,7 +12,7 @@ Extra features to boost your flow:
 - Times to listen (TTL) with `many()` (Idea borrowed from [EventEmitter2](https://github.com/asyncly/EventEmitter2))
 - Works in browsers
 
-![Sauce Test Status](https://saucelabs.com/browser-matrix/event-emitter-extra.svg)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/event-emitter-extra.svg)](https://saucelabs.com/u/event-emitter-extra)
 
 ## Getting Started
 
