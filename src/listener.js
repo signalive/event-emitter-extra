@@ -1,10 +1,10 @@
-import isString from 'lodash/isString';
-import isRegExp from 'lodash/isRegExp';
-import isFunction from 'lodash/isFunction';
-import isNumber from 'lodash/isNumber';
+const isString = require('lodash/isString');
+const isRegExp = require('lodash/isRegExp');
+const isFunction = require('lodash/isFunction');
+const isNumber = require('lodash/isNumber');
 
 
-export default class Listener {
+class Listener {
     constructor(eventName, handler, execLimit = 0) {
         if (isString(eventName)) {
             this.eventName = eventName;
@@ -55,3 +55,6 @@ export default class Listener {
 
     }
 }
+
+
+module.exports = Listener;

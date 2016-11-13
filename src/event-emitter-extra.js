@@ -1,11 +1,11 @@
-import assign from 'lodash/assign';
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isNumber from 'lodash/isNumber';
-import isRegExp from 'lodash/isRegExp';
-import isString from 'lodash/isString';
-import Listener from './listener';
-import Promise from 'promise-polyfill';
+const assign = require('lodash/assign');
+const isArray = require('lodash/isArray');
+const isFunction = require('lodash/isFunction');
+const isNumber = require('lodash/isNumber');
+const isRegExp = require('lodash/isRegExp');
+const isString = require('lodash/isString');
+const Listener = require('./listener');
+const Promise = require('promise-polyfill');
 
 
 class EventEmitterExtra {
