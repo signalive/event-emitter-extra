@@ -1,5 +1,5 @@
 describe('EventEmitterExtra', function() {
-    let ee;
+    var ee;
 
     beforeEach(function() {
         ee = new EventEmitterExtra();
@@ -72,7 +72,7 @@ describe('EventEmitterExtra', function() {
         ee.addListener('test', spy);
 
         const arg1 = {some: 'payload'};
-        const arg2 = () => {};
+        const arg2 = function() {};
 
         ee.emit('test', arg1, arg2);
 
@@ -90,8 +90,12 @@ describe('EventEmitterExtra', function() {
 
         ee.addListener('test', spy1);
         ee.addListener('test', spy2);
-        (() => ee.addListener('test', spy3)).should.throw(Error);
-        (() => ee.addListener('test', spy4)).should.throw(Error);
+        (function() {
+            return ee.addListener('test', spy3);
+        }).should.throw(Error);
+        (function() {
+            return ee.addListener('test', spy4);
+        }).should.throw(Error);
     });
 
     it('should not add more regex listeners if regex limit exceed', function() {
@@ -104,8 +108,12 @@ describe('EventEmitterExtra', function() {
 
         ee.addListener(/test/, spy1);
         ee.addListener(/test/, spy2);
-        (() => ee.addListener(/test/, spy3)).should.throw(Error);
-        (() => ee.addListener(/test/, spy4)).should.throw(Error);
+        (function() {
+            ee.addListener(/test/, spy3);
+        }).should.throw(Error);
+        (function() {
+            ee.addListener(/test/, spy4);
+        }).should.throw(Error);
     });
 
     it('should not handler for another event name', function() {
@@ -132,30 +140,30 @@ describe('EventEmitterExtra', function() {
     });
 
     it('should return array of handler returnings', function() {
-        ee.addListener('test', () => 'test1');
-        ee.addListener('test', () => 'test2');
-        ee.addListener('test', () => 'test3');
-        ee.addListener('another', () => 'test4');
+        ee.addListener('test', function() { return 'test1'; });
+        ee.addListener('test', function() { return 'test2'; });
+        ee.addListener('test', function() { return 'test3'; });
+        ee.addListener('another', function() { return 'test4'; });
 
         const result = ee.emit('test');
         result.should.be.deep.equal(['test1', 'test2', 'test3']);
     });
 
     it('should emit async', function(done) {
-        ee.addListener('test', () => 'test1');
-        ee.addListener('test', () => Promise.resolve('test2'));
-        ee.addListener('test', () => {
-            return new Promise(resolve => {
-                setTimeout(() => {
+        ee.addListener('test', function() { return 'test1'; });
+        ee.addListener('test', function() { return Promise.resolve('test2'); });
+        ee.addListener('test', function() {
+            return new Promise(function(resolve) {
+                setTimeout(function() {
                     resolve('test3');
                 }, 10);
             });
         });
-        ee.addListener('another', () => 'test4');
+        ee.addListener('another', function() { return 'test4'; });
 
         ee
             .emitAsync('test')
-            .then(result => {
+            .then(function(result) {
                 result.should.be.deep.equal(['test1', 'test2', 'test3']);
                 done();
             })
@@ -287,26 +295,26 @@ describe('EventEmitterExtra', function() {
     });
 
     it('should get event names', function() {
-        ee.addListener('test1', () => {});
-        ee.addListener('test2', () => {});
-        ee.addListener(/test3/, () => {});
+        ee.addListener('test1', function() {});
+        ee.addListener('test2', function() {});
+        ee.addListener(/test3/, function() {});
 
         ee.eventNames().should.be.deep.equal(['test1', 'test2'])
     });
 
     it('should get regexes', function() {
-        ee.addListener(/test1/, () => {});
-        ee.addListener(/test2/, () => {});
-        ee.addListener('test3', () => {});
+        ee.addListener(/test1/, function() {});
+        ee.addListener(/test2/, function() {});
+        ee.addListener('test3', function() {});
 
         ee.regexes().should.be.deep.equal([/test1/, /test2/])
     });
 
     it('should get listener counts', function() {
-        ee.addListener('test', () => {});
-        ee.addListener('test', () => {});
-        ee.addListener(/test/, () => {});
-        ee.addListener('test2', () => {});
+        ee.addListener('test', function() {});
+        ee.addListener('test', function() {});
+        ee.addListener(/test/, function() {});
+        ee.addListener('test2', function() {});
 
         ee.listenerCount('test').should.be.equal(2);
         ee.listenerCount(/test/).should.be.equal(1);
