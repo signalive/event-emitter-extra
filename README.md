@@ -251,3 +251,14 @@ listener if more than 10 regex listeners are added before.
 
 Returns EventEmitterExtra instance for chaining.
 
+## Development
+
+```bash
+npm run build
+npm run coverage
+COVERALLS_SERVICE_NAME="" COVERALLS_REPO_TOKEN="" npm run coverage:coveralls
+npm test
+npm run test:browser
+TRAVIS_BUILD_NUMBER="" npm run test:cloud
+```
+
