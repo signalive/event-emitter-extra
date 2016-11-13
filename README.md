@@ -1,6 +1,7 @@
 # EventEmitterExtra
 
 [![Build Status](https://travis-ci.org/signalive/event-emitter-extra.svg?branch=master)](https://travis-ci.org/signalive/event-emitter-extra)
+[![Coverage Status](https://coveralls.io/repos/github/signalive/event-emitter-extra/badge.svg?branch=master)](https://coveralls.io/github/signalive/event-emitter-extra?branch=master)
 
 EventEmitterExtra is an implementation of node.js's EventEmitter
 where can be found in `events` module. The interface is exactly same
