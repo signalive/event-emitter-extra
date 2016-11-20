@@ -1,4 +1,3 @@
-const assign = require('lodash/assign');
 const isArray = require('lodash/isArray');
 const isFunction = require('lodash/isFunction');
 const isNumber = require('lodash/isNumber');
@@ -6,6 +5,10 @@ const isRegExp = require('lodash/isRegExp');
 const isString = require('lodash/isString');
 const Listener = require('./listener');
 const Promise = require('promise-polyfill');
+
+if (!__MODERN__) {
+    Object.assign = require('lodash/assign');
+}
 
 
 class EventEmitterExtra {
@@ -248,7 +251,7 @@ class EventEmitterExtra {
         if (this.eventListeners_[eventName]) {
             const nameMatchedResults = this.eventListeners_[eventName]
                 .map(listener => listener.execute(
-                    assign({}, listener, {event}),
+                    Object.assign({}, listener, {event}),
                     args
                 ));
             results = results.concat(nameMatchedResults);
@@ -257,7 +260,7 @@ class EventEmitterExtra {
         const regexMatchedResults = this.regexListeners_
             .filter(listener => listener.testRegexWith(eventName))
             .map(listener => listener.execute(
-                assign({}, listener, {event}),
+                Object.assign({}, listener, {event}),
                 args
             ));
 

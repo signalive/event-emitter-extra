@@ -1,5 +1,12 @@
 const webpack = require('webpack');
 
+const definePlugin = new webpack.DefinePlugin({
+    __MODERN__: JSON.stringify(false)
+});
+const modernDefinePlugin = new webpack.DefinePlugin({
+    __MODERN__: JSON.stringify(true)
+});
+
 module.exports = [
     {
         name: 'commonjs',
@@ -18,6 +25,9 @@ module.exports = [
                 }
             ]
         },
+        plugins: [
+            definePlugin
+        ],
         devtool: 'source-map'
     },
     {
@@ -38,6 +48,9 @@ module.exports = [
                 { test: /promise-polyfill/, loader: 'ignore-loader' }
             ]
         },
+        plugins: [
+            modernDefinePlugin
+        ],
         devtool: 'source-map'
     },
     {
@@ -58,6 +71,9 @@ module.exports = [
                 }
             ]
         },
+        plugins: [
+            definePlugin
+        ],
         devtool: 'source-map'
     },
     {
@@ -79,6 +95,9 @@ module.exports = [
                 { test: /promise-polyfill/, loader: 'ignore-loader' }
             ]
         },
+        plugins: [
+            modernDefinePlugin
+        ],
         devtool: 'source-map'
     }
 ];
