@@ -44,8 +44,7 @@ module.exports = [
                     test: /\.js$/,
                     exclude: /(node_modules)/,
                     loaders: ['babel-loader']
-                },
-                { test: /promise-polyfill/, loader: 'ignore-loader' }
+                }
             ]
         },
         plugins: [
@@ -91,8 +90,7 @@ module.exports = [
                     test: /\.js$/,
                     exclude: /(node_modules)/,
                     loaders: ['babel-loader']
-                },
-                { test: /promise-polyfill/, loader: 'ignore-loader' }
+                }
             ]
         },
         plugins: [
