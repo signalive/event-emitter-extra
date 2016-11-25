@@ -272,7 +272,12 @@ class EventEmitterExtra {
 
 
     emitAsync(...args) {
-        return Promise.all(this.emit(...args));
+        const rv = this.emit(...args);
+
+        if (!rv)
+            return Promise.reject(new Error('No listener'));
+
+        return Promise.all(rv);
     }
 }
 
