@@ -213,6 +213,7 @@ Returns EventEmitterExtra instance for chaining.
 ### `EventEmitterExtra.prototype.removeAllListeners(eventName)`
 
 Removes all listeners, or those of the specified eventName.
+If eventName is not provided, all the event & regex listeners will be removed.
 
 - eventName: `String|RegExp|Array.<String|RegExp>`
 
