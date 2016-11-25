@@ -7,8 +7,8 @@
     "build": "webpack -p",
     "build:dev": "webpack",
     "build:watch": "webpack -p -w",
-    "coverage": "npm run build:dev && istanbul cover ./node_modules/.bin/_mocha -- test/runner-coverage.js -R spec",
-    "coverage:coveralls": "npm run build:dev && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- test/runner-coverage.js -R spec && cat ./coverage/lcov.info | coveralls",
+    "coverage": "istanbul cover ./node_modules/.bin/_mocha -- test/runner-coverage.js -R spec",
+    "coverage:coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- test/runner-coverage.js -R spec && cat ./coverage/lcov.info | coveralls",
     "test": "mocha test/runner.js",
     "test:browser": "zuul --local 8080 -- test/runner.js",
     "test:cloud": "zuul -- test/runner.js"
