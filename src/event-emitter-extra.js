@@ -1,3 +1,4 @@
+/* istanbul ignore if  */
 if (!__MODERN__) {
     Object.assign = require('lodash/assign');
     global.Promise = require('promise-polyfill');
@@ -251,6 +252,7 @@ class EventEmitterExtra {
 
         if (this.eventListeners_[eventName]) {
             const nameMatchedResults = this.eventListeners_[eventName]
+                .slice() // Shallow copy for not to skip if listener is expired
                 .map(listener => listener.execute(
                     Object.assign({}, listener, {event}),
                     args
@@ -288,6 +290,7 @@ EventEmitterExtra.Listener = Listener;
 
 
 function regexEquals(a, b) {
+    /* istanbul ignore if  */
     if (typeof a !== 'object' || typeof b !== 'object') return false;
     return a.toString() === b.toString();
 }
@@ -296,6 +299,7 @@ function regexEquals(a, b) {
 function remove(arr, predicate) {
     let removedItems = [];
 
+    /* istanbul ignore if  */
     if (isFunction(predicate)) {
         removedItems = arr.filter(predicate);
     } else if (arr.indexOf(predicate) > -1) {

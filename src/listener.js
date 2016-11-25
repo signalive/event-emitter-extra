@@ -39,14 +39,7 @@ class Listener {
 
 
     testRegexWith(eventName) {
-        if (!isString(eventName))
-            throw new Error('Event name should be string');
-
         const regex = this.eventNameRegex;
-
-        if (!regex)
-            throw new Error('This listener is not regex');
-
         return regex.test(eventName);
     }
 
