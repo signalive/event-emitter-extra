@@ -30,7 +30,14 @@ npm i event-emitter-extra
 Require EventEmitterExtra:
 
 ```js
+// As commonjs module (nodejs, webpack)
 const EventEmitterExtra = require('event-emitter-extra');
+
+// In browsers
+<script src="./node_modules/event-emitter-extra/dist/globals.js"></script>
+
+// In modern browsers (No polyfills, smaller size)
+<script src="./node_modules/event-emitter-extra/dist/globals.modern.js"></script>
 ```
 
 Directly usage:
