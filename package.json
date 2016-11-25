@@ -3,6 +3,7 @@
   "version": "0.1.4",
   "description": "Node.js event emitter implementation with regex support, emit results, TTL. Works on browsers.",
   "main": "dist/commonjs.js",
+  "types": "index.d.ts",
   "scripts": {
     "build": "webpack -p",
     "build:dev": "webpack",
