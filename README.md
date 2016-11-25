@@ -25,6 +25,8 @@ Install EventEmitterExtra as a dependency:
 
 ```bash
 npm i event-emitter-extra
+# or
+yarn add event-emitter-extra
 ```
 
 Require EventEmitterExtra:
