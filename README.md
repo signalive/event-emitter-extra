@@ -15,6 +15,7 @@ Extra features to boost your flow:
 - Times to listen (TTL) with `many()` (Idea borrowed from [EventEmitter2](https://github.com/asyncly/EventEmitter2))
 - Works in Node.js > v0.10
 - Works in browsers
+- Built-in typescript support
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/eventemitterextra.svg)](https://saucelabs.com/u/eventemitterextra)
 

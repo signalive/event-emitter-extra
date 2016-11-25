@@ -44,6 +44,7 @@
     "zuul": "3.11.1"
   },
   "dependencies": {
+    "@types/promises-a-plus": "^0.0.27",
     "promise-polyfill": "6.0.2"
   }
 }
