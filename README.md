@@ -66,10 +66,6 @@ Inheritence in ES6:
 
 ```js
 class myEventEmitter extends EventEmitterExtra {
-    constructor() {
-        super();
-    }
-
     sayHello(name) {
         this.emit('hello', name)
     }
@@ -128,7 +124,11 @@ ee.on('some-task', () => {
 });
 
 ee.on('some-task', () => {
-    return Promise.resolve('result 2');
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve('result 2');
+        }, 1000);
+    });
 });
 
 // Emit again
