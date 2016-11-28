@@ -53,8 +53,13 @@ ee.on('greeting', function(name) {
     console.log(`Hello ${name}`);
 });
 
+ee.on(/gre/, function(name) {
+    console.log('Regex is awesome');
+});
+
 ee.emit('greeting', 'world');
 // => Hello world
+// => Regex is awesome
 ```
 
 Inheritence in ES6:
@@ -63,17 +68,75 @@ Inheritence in ES6:
 class myEventEmitter extends EventEmitterExtra {
     constructor() {
         super();
-        this.on('greetings', this.onGreetings.bind(this));
     }
 
-    onGreetings(name) {
-        console.log(`Hello ${name}`);
+    sayHello(name) {
+        this.emit('hello', name)
     }
 }
 
 const ee = new myEventEmitter();
-ee.emit('greeting', 'world');
-// => Hello world
+
+ee.on('hello', name => {
+    console.log(`${name} is saying hello`);
+});
+
+ee.sayHello('world');
+// => world is saying hello
+```
+
+Emit results:
+
+```js
+const ee = new EventEmitterExtra();
+
+// Emit result is false, because there is no listener yet
+const result1 = ee.emit('greeting');
+// result1 == false
+
+// Add some listeners
+ee.on('greeting', () => {
+    return 'Hello from listener 1';
+});
+
+ee.on('greeting', () => {
+    return 'Hello from listener 2';
+});
+
+// Emit again
+const result2 = ee.emit('greeting');
+// result2 == ['Hello from listener 1', 'Hello from listener 2']
+```
+
+Advanced promise flows with `emitAsync`:
+
+```js
+const ee = new EventEmitterExtra();
+
+ee
+    .emitAsync('some-task')
+    .then(() => {
+        // This will be never called
+    })
+    .catch(err => {
+        // err => 'No listener'
+    });
+
+// Add some listeners
+ee.on('some-task', () => {
+    return Promise.resolve('result 1');
+});
+
+ee.on('some-task', () => {
+    return Promise.resolve('result 2');
+});
+
+// Emit again
+ee
+    .emitAsync('some-task')
+    .then((results) => {
+        // reults == ['result 1', 'result 2']
+    });
 ```
 
 ## API
