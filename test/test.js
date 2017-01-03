@@ -385,6 +385,28 @@ describe('EventEmitterExtra', function() {
         assert(spy4.calledOnce);
     });
 
+    it('should NOT remove any listeners for non-existing event name', function() {
+        var spy1 = sinon.spy();
+        var spy2 = sinon.spy();
+        var spy3 = sinon.spy();
+        var spy4 = sinon.spy();
+
+        ee.addListener('test1', spy1);
+        ee.addListener('test1', spy2);
+        ee.addListener('test2', spy3);
+        ee.addListener('test2', spy4);
+
+        ee.removeAllListeners('test3');
+
+        ee.emit('test1');
+        ee.emit('test2');
+
+        assert.equal(spy1.callCount, 1);
+        assert.equal(spy2.callCount, 1);
+        assert(spy3.calledOnce);
+        assert(spy4.calledOnce);
+    });
+
     it('should remove all listeners for regex', function() {
         var spy1 = sinon.spy();
         var spy2 = sinon.spy();
