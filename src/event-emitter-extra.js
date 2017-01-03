@@ -111,7 +111,7 @@ class EventEmitterExtra {
             const regex = eventName;
             const listeners = this.regexListeners_.filter(listener => regexEquals(listener.eventNameRegex, regex));
             listeners.forEach(listener => this.removeListener_(listener));
-        } else {
+        } else if (eventName == undefined) {
             this.removeAllListeners(this.eventNames());
             this.removeAllListeners(this.regexes());
         }
