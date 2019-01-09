@@ -277,7 +277,7 @@ class EventEmitterExtra {
         const rv = this.emit(...args);
 
         if (!rv)
-            return Promise.reject(new Error('No listener'));
+            return Promise.resolve();
 
         return Promise.all(rv);
     }
