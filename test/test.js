@@ -272,15 +272,14 @@ describe('EventEmitterExtra', function() {
             .catch(done);
     });
 
-    it('should reject emit async with no listener', function(done) {
+    it('should resolve emit async with no listener', function(done) {
         ee
             .emitAsync('noMatch')
             .then(function() {
-                done(new Error('Emit async resolved with no listeners'));
+                done();
             })
             .catch(function(err) {
-                assert.equal(err.message, 'No listener');
-                done();
+                done(new Error('Emit async rejected with no listeners'));
             });
     });
 
