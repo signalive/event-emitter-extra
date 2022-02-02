@@ -1,6 +1,6 @@
 {
   "name": "event-emitter-extra",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Node.js event emitter implementation with regex support, emit results, TTL. Works on browsers.",
   "main": "dist/commonjs.js",
   "scripts": {
