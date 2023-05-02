@@ -1,5 +1,5 @@
 /* istanbul ignore if  */
-if (!__MODERN__) {
+if (!__MODERN__ && !global.__MODERN__) {
     if (!Object.assign)
         Object.assign = require('lodash/assign');
     global.Promise = require('promise-polyfill');
