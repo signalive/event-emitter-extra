@@ -12,7 +12,8 @@
     "build:dev": "webpack --mode development",
     "build:watch": "webpack --mode production --watch",
     "coverage": "c8 node --test test/runner-coverage.js",
-    "test": "node --test test/runner.js"
+    "test": "node --test test/runner.js",
+    "serve:browser": "npm run build && node test/serve.js"
   },
   "keywords": [
     "event",
