@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+# These jobs run pull request code through npm ci, build and test, so the token
+# they carry gets no more than it needs to read the checkout.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The toolchain floor is c8: ^20.19 || ^22.12 || >=23.
+        node: ['20.19', '22.12', '24']
+    steps:
+      # Without this the token stays in .git/config, where the pull request code
+      # these jobs run could read it.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+
+  bundles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.12'
+      - run: npm ci
+      - run: npm run coverage
+
+      # dist/ is committed and published, so a bundle that no longer matches src
+      # has to fail here rather than ship.
+      - run: npm run build
+      - run: git diff --exit-code -- dist
+
+      # The tarball is the actual deliverable, so its contents are asserted
+      # rather than printed. `npm pack --dry-run` always exits 0, so on its own
+      # it would keep passing while a widened `files` field shipped test/,
+      # node_modules or a stray file, and only the log would show it.
+      - name: Check tarball contents
+        run: |
+          printf '%s\n' \
+            README.md \
+            dist/commonjs.js dist/commonjs.js.map \
+            dist/commonjs.modern.js dist/commonjs.modern.js.map \
+            dist/globals.js dist/globals.js.map \
+            dist/globals.modern.js dist/globals.modern.js.map \
+            index.d.ts package.json | sort > expected-files.txt
+          npm pack --dry-run --json \
+            | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(JSON.parse(s)[0].files.map(f=>f.path).join("\n")+"\n"))' \
+            | sort > actual-files.txt
+          diff expected-files.txt actual-files.txt
