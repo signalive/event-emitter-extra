@@ -1,8 +1,5 @@
 # EventEmitterExtra
 
-[![Build Status](https://travis-ci.org/signalive/event-emitter-extra.svg?branch=master)](https://travis-ci.org/signalive/event-emitter-extra)
-[![Coverage Status](https://coveralls.io/repos/github/signalive/event-emitter-extra/badge.svg?branch=master)](https://coveralls.io/github/signalive/event-emitter-extra?branch=master)
-
 EventEmitterExtra is an implementation of node.js's EventEmitter
 where can be found in `events` module. The interface is exactly same
 with node.js's EventEmitter. So you can directly replace
@@ -16,8 +13,6 @@ Extra features to boost your flow:
 - Works in Node.js > v0.10
 - Works in browsers
 - Built-in typescript support
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/eventemitterextra.svg)](https://saucelabs.com/u/eventemitterextra)
 
 ## Getting Started
 
@@ -329,12 +324,47 @@ Returns EventEmitterExtra instance for chaining.
 
 ## Development
 
+The build and test toolchain needs Node.js `^20.19 || ^22.12 || >=23` — the
+floor is c8's, and it does exclude 21.x and 22.0–22.11. The published bundles
+are ES5, so consumers are not bound by any of that. Tests run on Node's
+built-in test runner, so there is no third-party test framework to install.
+
 ```bash
+npm ci
 npm run build
-npm run coverage
-COVERALLS_SERVICE_NAME="" COVERALLS_REPO_TOKEN="" npm run coverage:coveralls
 npm test
-npm run test:browser
-TRAVIS_BUILD_NUMBER="" npm run test:cloud
+npm run coverage
 ```
+
+`test/test.js` also runs in a browser, against the built bundle rather than
+against `src`:
+
+```bash
+npm run serve:browser
+```
+
+That rebuilds, serves `dist`, `test` and sinon, and opens `test/runner.html`,
+which reports results inline. Append `?bundle=modern` to the URL to exercise
+`dist/globals.modern.js` instead of `dist/globals.js`. The page carries its own
+BDD harness, assertions and reporter in `test/browser-harness.js`, and
+`test/serve.js` uses nothing but Node's `http` module, so the browser path adds
+no dependencies either.
+
+It is named `serve:browser`, not `test:browser`, because it cannot fail: the
+server runs until interrupted, so its exit code says nothing about the tests.
+Read the page.
+
+Three things worth knowing about coverage and the browser page:
+
+- The browser run is read by eye. `npm test` covers only the Node path, so the
+  browser bundles have no automated coverage in CI.
+- The page needs a modern browser. `dist/globals.js` is ES5 and still targets
+  IE 11, but sinon's browser bundle is not, so the non-modern bundle's
+  old-browser support cannot be verified with this toolchain — it is a claim the
+  build makes, not something the tests check. Pinning an older sinon to regain
+  it would pull the 2016 dependency tree back in.
+- `npm run coverage` measures `src` with `__MODERN__` set, so the polyfill
+  branch at the top of `src/event-emitter-extra.js` — the code that only the
+  non-modern bundle takes — is excluded rather than tested. It is marked with a
+  `c8 ignore` to say so out loud instead of showing up as an unexplained gap.
 

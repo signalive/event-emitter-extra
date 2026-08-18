@@ -251,7 +251,7 @@ describe('EventEmitterExtra', function() {
         assert.deepEqual(result, ['test1', 'test2', 'test3']);
     });
 
-    it('should emit async', function(done) {
+    it('should emit async', function() {
         ee.addListener('test', function() { return 'test1'; });
         ee.addListener('test', function() { return Promise.resolve('test2'); });
         ee.addListener('test', function() {
@@ -263,23 +263,18 @@ describe('EventEmitterExtra', function() {
         });
         ee.addListener('another', function() { return 'test4'; });
 
-        ee
+        return ee
             .emitAsync('test')
             .then(function(result) {
                 assert.deepEqual(result, ['test1', 'test2', 'test3']);
-                done();
-            })
-            .catch(done);
+            });
     });
 
-    it('should resolve emit async with no listener', function(done) {
-        ee
+    it('should resolve emit async with no listener', function() {
+        return ee
             .emitAsync('noMatch')
-            .then(function() {
-                done();
-            })
-            .catch(function(err) {
-                done(new Error('Emit async rejected with no listeners'));
+            .then(function() {}, function() {
+                throw new Error('Emit async rejected with no listeners');
             });
     });
 
