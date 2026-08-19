@@ -48,6 +48,11 @@ jobs:
       - run: npm run build
       - run: git diff --exit-code -- dist
 
+      # Every engine that runs these bundles in CI is modern, so ES2015 syntax
+      # landing in dist stays green everywhere -- verified by injecting some.
+      # es-check parses all four bundles as ES5 and fails on anything newer.
+      - run: npm run check:es5
+
       # The tarball is the actual deliverable, so its contents are asserted
       # rather than printed. `npm pack --dry-run` always exits 0, so on its own
       # it would keep passing while a widened `files` field shipped test/,

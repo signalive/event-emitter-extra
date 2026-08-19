@@ -334,6 +334,7 @@ npm ci
 npm run build
 npm test
 npm run coverage
+npm run check:es5
 ```
 
 `test/test.js` also runs in a browser, against the built bundle rather than
@@ -360,9 +361,10 @@ Three things worth knowing about coverage and the browser page:
   browser bundles have no automated coverage in CI.
 - The page needs a modern browser. `dist/globals.js` is ES5 and still targets
   IE 11, but sinon's browser bundle is not, so the non-modern bundle's
-  old-browser support cannot be verified with this toolchain — it is a claim the
-  build makes, not something the tests check. Pinning an older sinon to regain
-  it would pull the 2016 dependency tree back in.
+  old-browser support cannot be exercised with this toolchain. `npm run
+  check:es5` verifies in CI that all four bundles still parse as ES5, but
+  runtime behaviour in old browsers stays unchecked. Pinning an older sinon to
+  regain it would pull the 2016 dependency tree back in.
 - `npm run coverage` measures `src` with `__MODERN__` set, so the polyfill
   branch at the top of `src/event-emitter-extra.js` — the code that only the
   non-modern bundle takes — is excluded rather than tested. It is marked with a
