@@ -3,18 +3,63 @@
  * test/runner-coverage.js, which otherwise differ only in what they put under
  * test: the built bundle or src.
  *
- * The shape rules live in test/test-shape.js so this file and
- * test/browser-harness.js cannot disagree about them.
+ * The browser run needs none of this: web-test-runner's mocha supplies the BDD
+ * globals and rejects a mocha-style `done` body natively, and chai supplies
+ * `assert` -- see web-test-runner.config.mjs and test/browser.test.js.
  */
 const nodeTest = require('node:test');
-const testShape = require('./test-shape');
+
+const AMBIGUOUS_ARITY =
+    'A test or hook taking exactly one parameter is ambiguous: node:test ' +
+    'passes a TestContext there, mocha passes `done`. Take no parameters ' +
+    'and return a promise, or take (t, done) and call done().';
+
+const MALFORMED_BODY =
+    'This test or hook was given a body that is not a function. node:test ' +
+    'reports that as a pass, so it is failed here instead.';
 
 function ambiguous() {
-    throw new Error(testShape.AMBIGUOUS_ARITY);
+    throw new Error(AMBIGUOUS_ARITY);
 }
 
 function malformed() {
-    throw new Error(testShape.MALFORMED_BODY);
+    throw new Error(MALFORMED_BODY);
+}
+
+function isOptions(value) {
+    return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * node:test takes ([name][, options][, fn]) for tests and (fn[, options])
+ * for hooks, so the body is whichever argument comes last as a function.
+ * Reading it positionally dropped the body of `it(name, options, fn)`.
+ */
+function bodyIndexOf(args) {
+    for (let i = args.length - 1; i >= 0; i--)
+        if (typeof args[i] === 'function') return i;
+
+    return -1;
+}
+
+/**
+ * True when an argument sits where a name, options or a function belongs and
+ * is none of them. node:test reports `it('x', 'oops')` as a pass, so the
+ * shape has to be judged here rather than left to it.
+ *
+ * `named` is false for hooks, which have no name slot: a leading string is a
+ * mistake there, not a title.
+ */
+function hasMalformedBody(args, named) {
+    for (let i = 0; i < args.length; i++) {
+        if (typeof args[i] === 'function') return false;
+        if (named && i === 0 && typeof args[i] === 'string') continue;
+        if (isOptions(args[i])) continue;
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -50,7 +95,7 @@ const SHAPES = {
  */
 function guardBody(args, shape) {
     const out = Array.prototype.slice.call(args);
-    const body = testShape.bodyIndexOf(out);
+    const body = bodyIndexOf(out);
 
     if (body !== -1) {
         if (shape.arity && out[body].length === 1) out[body] = ambiguous;
@@ -60,7 +105,7 @@ function guardBody(args, shape) {
 
     // No function anywhere.
     if (shape.bodyRequired) return [malformed];
-    if (!testShape.hasMalformedBody(out, shape.named)) return out;
+    if (!hasMalformedBody(out, shape.named)) return out;
 
     // Keep the name so the failure is identifiable in the report.
     return [typeof out[0] === 'string' ? out[0] : 'unnamed', malformed];

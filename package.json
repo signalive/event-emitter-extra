@@ -14,7 +14,7 @@
     "coverage": "c8 node --test test/runner-coverage.js",
     "check:es5": "es-check es5 'dist/*.js'",
     "test": "node --test test/runner.js",
-    "serve:browser": "npm run build && node test/serve.js"
+    "test:browser": "npm run build && web-test-runner"
   },
   "keywords": [
     "event",
@@ -35,8 +35,11 @@
   "devDependencies": {
     "@babel/core": "7.29.7",
     "@babel/preset-env": "7.29.7",
+    "@web/test-runner": "1.0.0",
+    "@web/test-runner-playwright": "1.0.0",
     "babel-loader": "10.1.1",
     "c8": "12.0.0",
+    "chai": "6.2.2",
     "es-check": "9.6.4",
     "lodash": "4.18.1",
     "sinon": "22.1.0",

@@ -337,34 +337,28 @@ npm run coverage
 npm run check:es5
 ```
 
-`test/test.js` also runs in a browser, against the built bundle rather than
-against `src`:
+`test/test.js` also runs in a real browser, against the built bundles rather
+than against `src`:
 
 ```bash
-npm run serve:browser
+npx playwright install chromium
+npm run test:browser
 ```
 
-That rebuilds, serves `dist`, `test` and sinon, and opens `test/runner.html`,
-which reports results inline. Append `?bundle=modern` to the URL to exercise
-`dist/globals.modern.js` instead of `dist/globals.js`. The page carries its own
-BDD harness, assertions and reporter in `test/browser-harness.js`, and
-`test/serve.js` uses nothing but Node's `http` module, so the browser path adds
-no dependencies either.
+That rebuilds and runs the same 38 tests headlessly in Chromium via
+@web/test-runner — once against `dist/globals.js` and once against
+`dist/globals.modern.js` — and exits non-zero on failure, so CI runs it on
+every push. The runner needs Node 22+; the Node-only paths above keep working
+on the documented floor. Two wiring details worth knowing: the bundles are
+classic `var` scripts, so the runner page loads them with a plain `<script>`
+tag rather than as modules, and `assert` comes from chai, whose ESM build
+stands in for the `node:assert` methods the tests use.
 
-It is named `serve:browser`, not `test:browser`, because it cannot fail: the
-server runs until interrupted, so its exit code says nothing about the tests.
-Read the page.
+Two things worth knowing about coverage and the browser run:
 
-Three things worth knowing about coverage and the browser page:
-
-- The browser run is read by eye. `npm test` covers only the Node path, so the
-  browser bundles have no automated coverage in CI.
-- The page needs a modern browser. `dist/globals.js` is ES5 and still targets
-  IE 11, but sinon's browser bundle is not, so the non-modern bundle's
-  old-browser support cannot be exercised with this toolchain. `npm run
-  check:es5` verifies in CI that all four bundles still parse as ES5, but
-  runtime behaviour in old browsers stays unchecked. Pinning an older sinon to
-  regain it would pull the 2016 dependency tree back in.
+- Chromium is a modern engine, so this cannot verify old-browser behaviour.
+  `npm run check:es5` verifies in CI that all four bundles still parse as ES5;
+  runtime behaviour in anything older than evergreen browsers stays unchecked.
 - `npm run coverage` measures `src` with `__MODERN__` set, so the polyfill
   branch at the top of `src/event-emitter-extra.js` — the code that only the
   non-modern bundle takes — is excluded rather than tested. It is marked with a

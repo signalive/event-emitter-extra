@@ -70,3 +70,32 @@ jobs:
             | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(JSON.parse(s)[0].files.map(f=>f.path).join("\n")+"\n"))' \
             | sort > actual-files.txt
           diff expected-files.txt actual-files.txt
+
+  # The same 38 tests, headless in real Chromium via @web/test-runner -- once
+  # against dist/globals.js and once against dist/globals.modern.js. This used
+  # to be a hand-served page read by eye; now it fails the build.
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.12'
+      - run: npm ci
+
+      # Installing with --with-deps took 16m37s of a 17m job (apt on the
+      # runner); the tests themselves take seconds. GitHub's Ubuntu images
+      # already carry Chrome's system libraries, so only the browser binary is
+      # needed, cached across runs and keyed on the Playwright version. If an
+      # image ever drops a library, this job fails loudly rather than quietly.
+      - id: playwright
+        run: echo "version=$(node -p "require('playwright-core/package.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ steps.playwright.outputs.version }}
+      - run: npx playwright install chromium
+
+      - run: npm run test:browser
