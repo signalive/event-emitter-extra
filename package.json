@@ -1,17 +1,20 @@
 {
   "name": "event-emitter-extra",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Node.js event emitter implementation with regex support, emit results, TTL. Works on browsers.",
   "main": "dist/commonjs.js",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "scripts": {
-    "build": "webpack -p",
-    "build:dev": "webpack",
-    "build:watch": "webpack -p -w",
-    "coverage": "istanbul cover ./node_modules/.bin/_mocha -- test/runner-coverage.js -R spec",
-    "coverage:coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- test/runner-coverage.js -R spec && cat ./coverage/lcov.info | coveralls",
-    "test": "mocha test/runner.js",
-    "test:browser": "zuul --local 8080 -- test/runner.js",
-    "test:cloud": "zuul -- test/runner.js"
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "build:watch": "webpack --mode production --watch",
+    "coverage": "c8 node --test test/runner-coverage.js",
+    "check:es5": "es-check es5 'dist/*.js'",
+    "test": "node --test test/runner.js",
+    "test:browser": "npm run build && web-test-runner"
   },
   "keywords": [
     "event",
@@ -30,18 +33,18 @@
   "homepage": "https://github.com/signalive/event-emitter-extra#readme",
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "6.18.2",
-    "babel-loader": "6.2.7",
-    "babel-preset-es2015": "6.18.0",
-    "coveralls": "2.11.15",
-    "ignore-loader": "^0.1.2",
-    "istanbul": "0.4.5",
-    "lodash": "4.16.6",
-    "mocha": "3.1.2",
-    "mocha-lcov-reporter": "1.2.0",
-    "sinon": "1.17.6",
-    "webpack": "v2.1.0-beta.27",
-    "zuul": "3.11.1"
+    "@babel/core": "7.29.7",
+    "@babel/preset-env": "7.29.7",
+    "@web/test-runner": "1.0.0",
+    "@web/test-runner-playwright": "1.0.0",
+    "babel-loader": "10.1.1",
+    "c8": "12.0.0",
+    "chai": "6.2.2",
+    "es-check": "9.6.4",
+    "lodash": "4.18.1",
+    "sinon": "22.1.0",
+    "webpack": "5.109.2",
+    "webpack-cli": "7.2.2"
   },
   "dependencies": {
     "@types/es6-promise": "0.0.32",

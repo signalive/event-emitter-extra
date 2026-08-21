@@ -1,9 +1,11 @@
-/* istanbul ignore if  */
+/* c8 ignore start -- only the non-modern bundle takes this branch, and the
+   coverage runner loads src with __MODERN__ set, so it is never measured. */
 if (!__MODERN__ && !global.__MODERN__) {
     if (!Object.assign)
         Object.assign = require('lodash/assign');
     global.Promise = require('promise-polyfill');
 }
+/* c8 ignore stop */
 
 const isArray = require('lodash/isArray');
 const isFunction = require('lodash/isFunction');
@@ -291,7 +293,7 @@ EventEmitterExtra.Listener = Listener;
 
 
 function regexEquals(a, b) {
-    /* istanbul ignore if  */
+    /* c8 ignore next -- callers always pass regexes */
     if (typeof a !== 'object' || typeof b !== 'object') return false;
     return a.toString() === b.toString();
 }
@@ -300,7 +302,7 @@ function regexEquals(a, b) {
 function remove(arr, predicate) {
     let removedItems = [];
 
-    /* istanbul ignore if  */
+    /* c8 ignore next 2 -- no caller passes a predicate function */
     if (isFunction(predicate)) {
         removedItems = arr.filter(predicate);
     } else if (arr.indexOf(predicate) > -1) {

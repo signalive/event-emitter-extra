@@ -1,8 +1,5 @@
 # EventEmitterExtra
 
-[![Build Status](https://travis-ci.org/signalive/event-emitter-extra.svg?branch=master)](https://travis-ci.org/signalive/event-emitter-extra)
-[![Coverage Status](https://coveralls.io/repos/github/signalive/event-emitter-extra/badge.svg?branch=master)](https://coveralls.io/github/signalive/event-emitter-extra?branch=master)
-
 EventEmitterExtra is an implementation of node.js's EventEmitter
 where can be found in `events` module. The interface is exactly same
 with node.js's EventEmitter. So you can directly replace
@@ -16,8 +13,6 @@ Extra features to boost your flow:
 - Works in Node.js > v0.10
 - Works in browsers
 - Built-in typescript support
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/eventemitterextra.svg)](https://saucelabs.com/u/eventemitterextra)
 
 ## Getting Started
 
@@ -329,12 +324,43 @@ Returns EventEmitterExtra instance for chaining.
 
 ## Development
 
+The build and test toolchain needs Node.js `^20.19 || ^22.12 || >=23` — the
+floor is c8's, and it does exclude 21.x and 22.0–22.11. The published bundles
+are ES5, so consumers are not bound by any of that. Tests run on Node's
+built-in test runner, so there is no third-party test framework to install.
+
 ```bash
+npm ci
 npm run build
-npm run coverage
-COVERALLS_SERVICE_NAME="" COVERALLS_REPO_TOKEN="" npm run coverage:coveralls
 npm test
-npm run test:browser
-TRAVIS_BUILD_NUMBER="" npm run test:cloud
+npm run coverage
+npm run check:es5
 ```
+
+`test/test.js` also runs in a real browser, against the built bundles rather
+than against `src`:
+
+```bash
+npx playwright install chromium
+npm run test:browser
+```
+
+That rebuilds and runs the same 38 tests headlessly in Chromium via
+@web/test-runner — once against `dist/globals.js` and once against
+`dist/globals.modern.js` — and exits non-zero on failure, so CI runs it on
+every push. The runner needs Node 22+; the Node-only paths above keep working
+on the documented floor. Two wiring details worth knowing: the bundles are
+classic `var` scripts, so the runner page loads them with a plain `<script>`
+tag rather than as modules, and `assert` comes from chai, whose ESM build
+stands in for the `node:assert` methods the tests use.
+
+Two things worth knowing about coverage and the browser run:
+
+- Chromium is a modern engine, so this cannot verify old-browser behaviour.
+  `npm run check:es5` verifies in CI that all four bundles still parse as ES5;
+  runtime behaviour in anything older than evergreen browsers stays unchecked.
+- `npm run coverage` measures `src` with `__MODERN__` set, so the polyfill
+  branch at the top of `src/event-emitter-extra.js` — the code that only the
+  non-modern bundle takes — is excluded rather than tested. It is marked with a
+  `c8 ignore` to say so out loud instead of showing up as an unexplained gap.
 
